@@ -55,6 +55,10 @@ public class RSAUtils {
         return map;
     }
 
+    /**
+     * 手工制作公私钥，通过计算互质大数。
+     * @return 公钥和私钥
+     */
     public static HashMap<String, Key> genKeysByHand() {
         int keySize = 512;
         SecureRandom random = new SecureRandom();
@@ -225,7 +229,7 @@ public class RSAUtils {
     }
 
     /**
-     *
+     * 加密成字符串，字节流用base64转成string
      * @param plainText
      * @param publicKey
      * @return
@@ -237,11 +241,25 @@ public class RSAUtils {
         return Base64.getEncoder().encodeToString(encrypted);
     }
 
+    /**
+     * 从base64编码的字符串解密
+     * @param base64EncodedStr
+     * @param privateKey
+     * @return
+     * @throws Exception
+     */
     public static String decryptFromBase64Str(String base64EncodedStr, RSAPrivateKey privateKey) throws Exception {
         byte[] encryptedString = Base64.getDecoder().decode(base64EncodedStr);
         return decrypt(encryptedString, privateKey);
     }
 
+    /**
+     * 私钥签名
+     * @param plainText
+     * @param privateKey
+     * @return
+     * @throws Exception
+     */
     public static byte[] sign(String plainText, RSAPrivateKey privateKey) throws Exception {
         Signature privateSignature = Signature.getInstance("SHA256withRSA");
         privateSignature.initSign(privateKey);
@@ -249,11 +267,26 @@ public class RSAUtils {
         return privateSignature.sign();
     }
 
+    /**
+     * 私钥签名成base64字符串
+     * @param plainText
+     * @param privateKey
+     * @return
+     * @throws Exception
+     */
     public static String signToBase64Str(String plainText, RSAPrivateKey privateKey) throws Exception {
         byte[] signature = sign(plainText, privateKey);
         return signature == null ? null : Base64.getEncoder().encodeToString(signature);
     }
 
+    /**
+     * 验证签名
+     * @param signature
+     * @param plainText
+     * @param publicKey
+     * @return
+     * @throws Exception
+     */
     public static boolean verify (byte[] signature, String plainText, RSAPublicKey publicKey) throws Exception{
         Signature publicSignature = Signature.getInstance("SHA256withRSA");
         publicSignature.initVerify(publicKey);
@@ -261,6 +294,14 @@ public class RSAUtils {
         return publicSignature.verify(signature);
     }
 
+    /**
+     * 验证base64编码的签名
+     * @param base64EncodedSignature
+     * @param plainText
+     * @param publicKey
+     * @return
+     * @throws Exception
+     */
     public static boolean verifyFromBase64Str (String base64EncodedSignature, String plainText, RSAPublicKey publicKey) throws Exception {
         byte[] signature = Base64.getDecoder().decode(base64EncodedSignature);
         return verify(signature, plainText, publicKey);
