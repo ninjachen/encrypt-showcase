@@ -1,12 +1,12 @@
-package rocks.ninjachen.encrypts.encryptutils;
+package rocks.ninjachen.examples;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EncryptutilsApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EncryptutilsApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 }
