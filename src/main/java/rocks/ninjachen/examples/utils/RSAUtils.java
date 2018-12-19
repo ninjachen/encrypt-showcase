@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -30,6 +31,7 @@ import java.util.HashMap;
  * signToBase64Str
  * verify
  * verifyFromBase64Str
+ * </p>
  */
 public class RSAUtils {
 
@@ -38,25 +40,25 @@ public class RSAUtils {
      */
     public static String ALGORITHM = "RSA";
 
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
     /**
      * 生成公钥和私钥
-     *
+     * @param keySize at least 512 bit(RSA)
      * @throws NoSuchAlgorithmException
      */
-    public static HashMap<String, Key> genKeys() throws NoSuchAlgorithmException {
-        HashMap<String, Key> map = new HashMap<>();
+    public static RSAKeyPair genKeys(int keySize) throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(ALGORITHM);
-        keyPairGen.initialize(1024);
+        keyPairGen.initialize(keySize);
         KeyPair keyPair = keyPairGen.generateKeyPair();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        map.put("public", publicKey);
-        map.put("private", privateKey);
-        return map;
+        return new RSAKeyPair(privateKey, publicKey);
     }
 
     /**
      * 手工制作公私钥，通过计算互质大数。
+     *
      * @return 公钥和私钥
      */
     public static HashMap<String, Key> genKeysByHand() {
@@ -207,7 +209,7 @@ public class RSAUtils {
             throws Exception {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        byte[] encrypted = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+        byte[] encrypted = cipher.doFinal(plainText.getBytes(DEFAULT_CHARSET));
         return encrypted;
     }
 
@@ -225,11 +227,12 @@ public class RSAUtils {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] originBytes = cipher.doFinal(encryptedBytes);
-        return new String(originBytes, StandardCharsets.UTF_8);
+        return new String(originBytes, DEFAULT_CHARSET);
     }
 
     /**
      * 加密成字符串，字节流用base64转成string
+     *
      * @param plainText
      * @param publicKey
      * @return
@@ -243,6 +246,7 @@ public class RSAUtils {
 
     /**
      * 从base64编码的字符串解密
+     *
      * @param base64EncodedStr
      * @param privateKey
      * @return
@@ -255,6 +259,7 @@ public class RSAUtils {
 
     /**
      * 私钥签名
+     *
      * @param plainText
      * @param privateKey
      * @return
@@ -263,12 +268,13 @@ public class RSAUtils {
     public static byte[] sign(String plainText, RSAPrivateKey privateKey) throws Exception {
         Signature privateSignature = Signature.getInstance("SHA256withRSA");
         privateSignature.initSign(privateKey);
-        privateSignature.update(plainText.getBytes(StandardCharsets.UTF_8));
+        privateSignature.update(plainText.getBytes(DEFAULT_CHARSET));
         return privateSignature.sign();
     }
 
     /**
      * 私钥签名成base64字符串
+     *
      * @param plainText
      * @param privateKey
      * @return
@@ -281,29 +287,62 @@ public class RSAUtils {
 
     /**
      * 验证签名
+     *
      * @param signature
      * @param plainText
      * @param publicKey
      * @return
      * @throws Exception
      */
-    public static boolean verify (byte[] signature, String plainText, RSAPublicKey publicKey) throws Exception{
+    public static boolean verify(byte[] signature, String plainText, RSAPublicKey publicKey) throws Exception {
         Signature publicSignature = Signature.getInstance("SHA256withRSA");
         publicSignature.initVerify(publicKey);
-        publicSignature.update(plainText.getBytes(StandardCharsets.UTF_8));
+        publicSignature.update(plainText.getBytes(DEFAULT_CHARSET));
         return publicSignature.verify(signature);
     }
 
     /**
      * 验证base64编码的签名
+     *
      * @param base64EncodedSignature
      * @param plainText
      * @param publicKey
      * @return
      * @throws Exception
      */
-    public static boolean verifyFromBase64Str (String base64EncodedSignature, String plainText, RSAPublicKey publicKey) throws Exception {
+    public static boolean verifyFromBase64Str(String base64EncodedSignature, String plainText, RSAPublicKey publicKey) throws Exception {
         byte[] signature = Base64.getDecoder().decode(base64EncodedSignature);
         return verify(signature, plainText, publicKey);
+    }
+
+    /**
+     * RSAKey bundle
+     */
+    public static class RSAKeyPair {
+        private RSAPrivateKey privateKey;
+        private RSAPublicKey publicKey;
+
+        public RSAKeyPair() {}
+
+        public RSAKeyPair(RSAPrivateKey privateKey, RSAPublicKey publicKey) {
+            this.privateKey = privateKey;
+            this.publicKey = publicKey;
+        }
+
+        public RSAPrivateKey getPrivateKey() {
+            return privateKey;
+        }
+
+        public void setPrivateKey(RSAPrivateKey privateKey) {
+            this.privateKey = privateKey;
+        }
+
+        public RSAPublicKey getPublicKey() {
+            return publicKey;
+        }
+
+        public void setPublicKey(RSAPublicKey publicKey) {
+            this.publicKey = publicKey;
+        }
     }
 }

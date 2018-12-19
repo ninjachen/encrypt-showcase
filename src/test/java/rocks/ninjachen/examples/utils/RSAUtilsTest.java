@@ -58,7 +58,7 @@ public class RSAUtilsTest {
 
     @Test
     public void genKeys() throws NoSuchAlgorithmException {
-        assertNotNull(RSAUtils.genKeys());
+        assertNotNull(RSAUtils.genKeys(1024));
     }
 
     @Test
