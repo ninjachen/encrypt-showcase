@@ -1,6 +1,12 @@
 #### Introduce
 A simple rsa util with unit test coverage 100%.
 
+#### Envs
+- JDK 17
+- Gradle 8
+- Sprint Boot 3
+- Junit 5
+
 #### Main apis
 
 - genKeys
