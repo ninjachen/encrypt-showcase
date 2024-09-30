@@ -1,22 +1,14 @@
 package rocks.ninjachen.examples.utils;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import sun.misc.BASE64Decoder;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Base64;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * A careful test case which cover all the usage of RSAUtils.
@@ -47,12 +39,12 @@ public class RSAUtilsTest {
     public static String privExponent = "00abc5b173d421fe32e6f168103a8f492dbbaf5a7ad9ecb75a88a56ac67d87d3dd2a14eb384efd41a9e660f31b0d7f24616f1eca6d69771bd94efd8c12e917d0dd5c1cd39639caa785cf944420a64e37f5bbb522a48de1ffd8178afd1874f16a9ba17218132ceae9378b85762e006090525e232e172740f2247ca881005cdce1b9c3b23250a1e6232058e27aeed4dbcc12326754ad00d0e3e0c290fbca1921b48b9edfa879da1165a7d48c510e165e46815cc4f0c6d6504930903d5ef17f1da4d812c72984ecb7e183a51d0a42760a655656d8507e5e1a6f411a943e15ca85b631dddd3ea06fa36701e35e69a74f7aaacff1a423b9741f5c8ae2f39b3faa1bfde9";
 
     ClassLoader classLoader;
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         classLoader = getClass().getClassLoader();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
