@@ -2,7 +2,7 @@
 A simple rsa util with unit test coverage 100%.
 
 #### Envs
-- JDK 17
+- JDK 21
 - Gradle 8
 - Sprint Boot 3
 - Junit 5
